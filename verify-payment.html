@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Payment | Data4Ghana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --accent: #6366f1;
+            --bg-dark: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* PREMIUM MESH GRADIENT BACKGROUND */
+        .background-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #f8fafc;
+            filter: blur(80px);
+            opacity: 0.6;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: move 20s infinite alternate;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(59, 130, 246, 0.3);
+            top: -10%;
+            right: -10%;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(99, 102, 241, 0.2);
+            bottom: -15%;
+            left: -10%;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: rgba(14, 165, 233, 0.25);
+            top: 40%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+
+        @keyframes move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(100px, 50px) scale(1.1); }
+        }
+
+        /* MAIN GLASS CARD */
+        .verify-wrapper {
+            width: 100%;
+            max-width: 460px;
+            padding: 20px;
+            animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .premium-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                0 20px 40px -4px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* CARD ACCENT LINE */
+        .card-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .brand-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.15);
+            position: relative;
+        }
+
+        .brand-icon svg {
+            color: var(--primary);
+            filter: drop-shadow(0 4px 6px rgba(59, 130, 246, 0.2));
+        }
+
+        .pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--primary);
+            border-radius: 24px;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.9); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        .premium-card h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--bg-dark);
+            letter-spacing: -0.8px;
+            margin-bottom: 12px;
+        }
+
+        .premium-card p.description {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* INPUT STYLING */
+        .input-box {
+            margin-bottom: 24px;
+        }
+
+        .label-text {
+            display: block;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            margin-left: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field-wrapper {
+            position: relative;
+        }
+
+        .ref-input {
+            width: 100%;
+            padding: 20px;
+            background: rgba(241, 245, 249, 0.8);
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--bg-dark);
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .ref-input::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0;
+        }
+
+        .ref-input:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* BUTTON STYLING */
+        .action-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 12px 24px -6px rgba(59, 130, 246, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px -8px rgba(59, 130, 246, 0.5);
+            filter: brightness(1.05);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .action-btn:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .action-btn .btn-shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s;
+        }
+
+        .action-btn:hover .btn-shine {
+            left: 150%;
+        }
+
+        /* SECURITY STATUS BOX */
+        .status-box {
+            margin-top: 32px;
+            padding: 20px;
+            background: rgba(254, 243, 232, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 237, 213, 0.5);
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            text-align: left;
+        }
+
+        .status-icon-circle {
+            width: 36px;
+            height: 36px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ea580c;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.1);
+            flex-shrink: 0;
+        }
+
+        .status-content h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #9a3412;
+            margin-bottom: 4px;
+        }
+
+        .status-content p {
+            font-size: 12px;
+            color: #c2410c;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* NAVIGATION */
+        .back-nav {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 10;
+        }
+
+        .back-btn {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 20px;
+            border-radius: 16px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+            background: white;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 500px) {
+            .premium-card {
+                padding: 32px 24px;
+                border-radius: 28px;
+            }
+            .premium-card h1 {
+                font-size: 24px;
+            }
+            .back-nav {
+                top: 20px;
+                left: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- DECORATIVE BACKGROUND BLOBS -->
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div id="menu-container"></div>
+    <button class="menu-btn" onclick="openMenu()">☰</button>
+
+    <!-- BACK NAVIGATION -->
+    <div class="back-nav">
+        <a href="wallet.html" class="back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Wallet
+        </a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="verify-wrapper">
+        <div class="premium-card">
+            <div class="card-accent"></div>
+            
+            <div class="header-section">
+                <div class="brand-icon">
+                    <div class="pulse-ring"></div>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <h1>Verify Payment</h1>
+                <p class="description">If your wallet wasn't credited automatically, paste your transaction reference below to sync instantly.</p>
+            </div>
+
+            <div class="input-box">
+                <label class="label-text">Paystack Reference</label>
+                <div class="input-field-wrapper">
+                    <input type="text" id="paystackRef" class="ref-input" placeholder="e.g. T673892019..." autocomplete="off">
+                </div>
+            </div>
+
+            <button id="verifyBtn" class="action-btn" onclick="startVerification()">
+                <div class="btn-shine"></div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Verify & Credit Wallet
+            </button>
+
+            <div class="status-box">
+                <div class="status-icon-circle">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                </div>
+                <div class="status-content">
+                    <h3>Anti-Fraud Protocol</h3>
+                    <p>Invalid or repetitive attempts will trigger an automatic account suspension for security review.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/verify-payment.js"></script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Dashboard | Admin Portal</title>
+    
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="js/security.js"></script>
+    <!-- Supabase Database Connection --><script src="js/supabase.js"></script>
+    <script src="js/api-service.js"></script>
+</head>
+<body class="admin-dashboard-bg">
+
+    <!-- Mobile Menu Button -->
+    <button class="admin-menu-btn" onclick="toggleAdminSidebar()" aria-label="Toggle Navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="admin-overlay" id="adminOverlay" onclick="toggleAdminSidebar()"></div>
+
+    <div class="sidebar" id="adminSidebar">
+        <div class="brand">
+            <div class="shield">🛡️</div>
+            <h3>AdminHQ</h3>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active" onclick="switchTab('overview')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                Overview Analytics
+            </a>
+            <a href="#" onclick="switchTab('orders')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                Pending Orders
+            </a>
+            <a href="#" onclick="switchTab('scheduled')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+                Scheduled Orders
+            </a>
+            <a href="#" onclick="switchTab('pricing')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Pricing & Controls
+            </a>
+            <a href="#" onclick="switchTab('afa')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m19 8 2 2-4 4"/></svg>
+                Specialized Services
+            </a>
+            <a href="#" onclick="switchTab('manual')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Manual Funding
+            </a>
+            <a href="#" onclick="switchTab('support')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></svg>
+                Support Tickets
+            </a>
+            <a href="#" onclick="switchTab('users')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                User Database
+            </a>
+            <a href="#" onclick="switchTab('profit')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Profit Calculator
+            </a>
+
+            <a href="#" onclick="switchTab('stores')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg>
+                Store Management
+            </a>
+        </div>
+        <button class="logout-btn" onclick="adminLogout()">Sign Out</button>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <div class="user-info">
+                <h1>Command Center</h1>
+                <p>Welcome back, Administrator.</p>
+            </div>
+            <button class="refresh-btn" onclick="hardRefresh()" style="background:#2563eb; color:white; border:none; padding:10px 20px;">Synchronize Database</button>
+        </header>
+
+        <!-- OVERVIEW ANALYTICS SECTION -->
+        <section id="tab-overview" class="dashboard-panel active">
+            <div class="panel-header">
+                <h2>Real-Time Metrics</h2>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">👤</div>
+                    <div class="stat-content">
+                        <p>Real Registered Users</p>
+                        <h3 id="metric-real-users">...</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">💳</div>
+                    <div class="stat-content">
+                        <p>Total Life Transactions</p>
+                        <h3 id="metric-tx">...</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">📈</div>
+                    <div class="stat-content">
+                        <p>Total Processing (Today)</p>
+                        <h3 id="metric-sales">...</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">📦</div>
+                    <div class="stat-content">
+                        <p>Total Tracking Records (Today)</p>
+                        <h3 id="metric-orders">...</h3>
+                    </div>
+                </div>
+                <!-- New Lifetime Metrics -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5;">💰</div>
+                    <div class="stat-content">
+                        <p>Total Revenue (Lifetime)</p>
+                        <h3 id="metric-revenue-total">...</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">📈</div>
+                    <div class="stat-content">
+                        <p>Total Profit (Lifetime)</p>
+                        <h3 id="metric-profit-total">...</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(244, 63, 94, 0.1); color: #f43f5e;">🏦</div>
+                    <div class="stat-content">
+                        <p>Total User Balances</p>
+                        <h3 id="metric-user-balances">...</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-header" style="margin-top: 40px;">
+                <h2>Order Fulfillment Matrix</h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                <!-- Primary Matrix Hub -->
+                <div style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">All Life Orders</p>
+                    <h1 id="overview-count-all" style="margin: 0; font-size: 56px; font-weight: 900; color: #0f172a; line-height: 1;">0</h1>
+                    <button onclick="switchTab('orders'); quickFilterStatus('');" style="margin-top: 20px; padding: 8px 16px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; font-weight: 700; color: #475569; cursor: pointer;">View All Matrix ↗</button>
+                </div>
+
+                <!-- 2x2 Grid Hub -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="background: white; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #dc2626;">
+                        <p style="margin: 0 0 4px; font-size: 11px; font-weight: 700; color: #dc2626; text-transform: uppercase;">Pending</p>
+                        <h3 id="overview-count-pending" style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a;">0</h3>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb;">
+                        <p style="margin: 0 0 4px; font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase;">Processing</p>
+                        <h3 id="overview-count-processing" style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a;">0</h3>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #059669;">
+                        <p style="margin: 0 0 4px; font-size: 11px; font-weight: 700; color: #059669; text-transform: uppercase;">Completed</p>
+                        <h3 id="overview-count-completed" style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a;">0</h3>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #d97706;">
+                        <p style="margin: 0 0 4px; font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase;">Refunded</p>
+                        <h3 id="overview-count-refunded" style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a;">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-header" style="margin-top: 40px;">
+                <h2>Recent Registrations</h2>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Joined Info</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overviewRecentUsersBody">
+                        <tr><td colspan="4" class="state-msg">Loading recent recruits...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ADVANCED ORDERS SECTION -->
+        <section id="tab-orders" class="dashboard-panel">
+            <div class="panel-header">
+                <h2>Advanced Order Management</h2>
+                <div class="metrics-counters" style="display:flex; gap:15px; font-weight:700;">
+                    <span style="color:#059669;">Selected: <span id="selectCounter">0</span></span>
+                    <span style="color:#2563eb;">Total Query Results: <span id="totalResultsCounter">0</span></span>
+                </div>
+            </div>
+
+            <!-- Status Count Cards -->
+            <div id="orderStatusCards" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:20px;">
+                <div style="background:white; padding:14px 18px; border-radius:12px; border:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">All Orders</p>
+                    <h4 id="count_all" style="margin:0; font-size:20px; font-weight:800; color:#0f172a;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #dc2626; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('false')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#dc2626; text-transform:uppercase;">Pending</p>
+                    <h4 id="count_pending" style="margin:0; font-size:20px; font-weight:800; color:#dc2626;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #059669; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('true')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#059669; text-transform:uppercase;">Completed</p>
+                    <h4 id="count_completed" style="margin:0; font-size:20px; font-weight:800; color:#059669;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #2563eb; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('Processing')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#2563eb; text-transform:uppercase;">Processing</p>
+                    <h4 id="count_processing" style="margin:0; font-size:20px; font-weight:800; color:#2563eb;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #2563eb; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('In transit')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#2563eb; text-transform:uppercase;">In Transit</p>
+                    <h4 id="count_transit" style="margin:0; font-size:20px; font-weight:800; color:#2563eb;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #059669; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('Received')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#059669; text-transform:uppercase;">Received</p>
+                    <h4 id="count_received" style="margin:0; font-size:20px; font-weight:800; color:#059669;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #64748b; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('Waiting')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">Waiting</p>
+                    <h4 id="count_waiting" style="margin:0; font-size:20px; font-weight:800; color:#64748b;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #ef4444; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('Undelivered')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#ef4444; text-transform:uppercase;">Undelivered</p>
+                    <h4 id="count_undelivered" style="margin:0; font-size:20px; font-weight:800; color:#ef4444;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #d97706; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('Refunded')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#d97706; text-transform:uppercase;">Refunded</p>
+                    <h4 id="count_refunded" style="margin:0; font-size:20px; font-weight:800; color:#d97706;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #ef4444; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('Failed')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#ef4444; text-transform:uppercase;">Failed</p>
+                    <h4 id="count_failed" style="margin:0; font-size:20px; font-weight:800; color:#ef4444;">0</h4>
+                </div>
+                <div style="background:white; padding:14px 18px; border-radius:12px; border-left:3px solid #64748b; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; cursor:pointer;" onclick="quickFilterStatus('Cancelled')">
+                    <p style="margin:0 0 2px; font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">Cancelled</p>
+                    <h4 id="count_cancelled" style="margin:0; font-size:20px; font-weight:800; color:#64748b;">0</h4>
+                </div>
+            </div>
+
+            <!-- Complex Filtering Matrix -->
+            <div class="filter-bar" style="display:flex; gap:12px; margin-bottom: 20px; flex-wrap: wrap;">
+                <input type="text" id="filterPhone" placeholder="Search Phone Number..." class="admin-input">
+                <input type="text" id="filterRef" placeholder="Id / Ref..." class="admin-input" style="width:220px;">
+                <input type="date" id="filterDateFrom" class="admin-input">
+                <input type="date" id="filterDateTo" class="admin-input">
+                <select id="filterStatus" class="admin-input" onchange="applyOrderFilters()">
+                    <option value="">All Statuses</option>
+                    <option value="false" selected>Pending (Unfulfilled)</option>
+                    <option value="In transit">In Transit</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Received">Received</option>
+                    <option value="Undelivered">Undelivered</option>
+                    <option value="true">Completed (Fulfilled)</option>
+                    <option value="Refunded">Refunded</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Waiting">Waiting</option>
+                    <option value="Failed">Failed</option>
+                </select>
+                <select id="filterProduct" class="admin-input" onchange="applyOrderFilters()">
+                    <option value="">All Products</option>
+                    <option value="MTN">MTN Data</option>
+                    <option value="Telecel">Telecel</option>
+                    <option value="AirtelTigo">AirtelTigo</option>
+                    <option value="Bigtime">Bigtime</option>
+                </select>
+                <button class="refresh-btn" onclick="applyOrderFilters()" style="background:#0f172a; color:white;">Manual Apply</button>
+            </div>
+
+            <!-- Bulk Control Matrix -->
+            <div class="mass-action-bar" style="display:flex; gap:12px; padding:15px; background:white; border:1px solid #e2e8f0; border-radius:10px; margin-bottom: 20px; align-items:center; flex-wrap:wrap;">
+                <div style="border-right:1px solid #e2e8f0; padding-right:15px; display:flex; gap:10px;">
+                    <input type="number" id="autoSelectCount" placeholder="Auto-select # rows" class="admin-input" style="width:160px;">
+                    <button class="action-btn btn-view" onclick="autoSelectRows()">Select Rows</button>
+                </div>
+
+                <!-- Smart Selection Group -->
+                <div style="border-right:1px solid #e2e8f0; padding-right:15px; display:flex; gap:10px; align-items:center;">
+                    <span style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">Smart Select:</span>
+                    <button class="action-btn" style="background:#4f46e5; color:white; font-size:11px;" onclick="selectAllForNumber()">All for Number</button>
+                    <button class="action-btn" style="background:#7c3aed; color:white; font-size:11px;" onclick="selectSameStatus()">Same Status</button>
+                </div>
+                
+                <div style="display:flex; gap:8px; align-items:center; border-right:1px solid #e2e8f0; padding-right:15px;">
+                    <select id="massStatusUpdateSelect" class="admin-input" style="width:160px;">
+                        <option value="">Update Status...</option>
+                        <option value="false">Pending</option>
+                        <option value="true">Completed</option>
+                        <option value="Processing">Processing</option>
+                        <option value="In transit">In Transit</option>
+                        <option value="Received">Received</option>
+                        <option value="Waiting">Waiting</option>
+                        <option value="Undelivered">Undelivered</option>
+                        <option value="Refund">Refunded</option>
+                        <option value="Failed">Failed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <button class="action-btn btn-approve" onclick="applyMassStatusUpdateOrders()">Update</button>
+                </div>
+
+                <button class="action-btn btn-approve" onclick="massUpdateSelected()" style="opacity:0.7;">Quick Fulfill (Legacy)</button>
+                <button class="action-btn" style="background:#10b981; color:white;" onclick="exportSelectedToExcel()">Export CSV</button>
+            </div>
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllOrders" onclick="toggleAllOrders(this)"></th>
+                            <th>Id</th>
+                            
+                            <th>Customer & Recipient</th>
+                            <th>Prod & GB Size</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <tr><td colspan="7" class="state-msg">Loading comprehensive order matrix...</td></tr>
+                    </tbody>
+                </table>
+                <!-- Pagination -->
+                <div id="orderPagination" style="padding: 15px; display: flex; justify-content: center; gap: 10px; border-top: 1px solid #e2e8f0;">
+                    <!-- Auto-generated page buttons will append here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SCHEDULED ORDERS SECTION -->
+        <section id="tab-scheduled" class="dashboard-panel">
+            <div class="panel-header">
+                <h2>Scheduled Deliveries Matrix</h2>
+                <div class="metrics-counters" style="display:flex; gap:15px; font-weight:700;">
+                    <span style="color:#059669;">Selected: <span id="schedSelectCounter">0</span></span>
+                    <span style="color:#8b5cf6;">Total Queued: <span id="schedTotalCounter">0</span></span>
+                </div>
+            </div>
+
+            <!-- Filter Matrix -->
+            <div class="filter-bar" style="display:flex; gap:12px; margin-bottom: 20px; flex-wrap: wrap;">
+                <input type="text" id="schedFilterPhone" placeholder="Search Phone Number..." class="admin-input">
+                <input type="text" id="schedFilterRef" placeholder="Id / Ref..." class="admin-input" style="width:220px;">
+                <select id="schedFilterNetwork" class="admin-input" onchange="applyScheduledFiltersAdmin()">
+                    <option value="">All Networks</option>
+                    <option value="MTN">MTN Data</option>
+                    <option value="Telecel">Telecel</option>
+                    <option value="AirtelTigo">AirtelTigo / Ishare</option>
+                </select>
+                <select id="schedFilterStatus" class="admin-input" onchange="applyScheduledFiltersAdmin()">
+                    <option value="">All Statuses</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="false">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="In transit">In Transit</option>
+                    <option value="Received">Received</option>
+                    <option value="Waiting">Waiting</option>
+                    <option value="Undelivered">Undelivered</option>
+                    <option value="true">Completed</option>
+                    <option value="Refunded">Refunded</option>
+                    <option value="Failed">Failed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <button class="refresh-btn" onclick="applyScheduledFiltersAdmin()" style="background:#0f172a; color:white;">Apply Filters</button>
+            </div>
+
+            <!-- Bulk Control Matrix -->
+            <div class="mass-action-bar" style="display:flex; gap:12px; padding:15px; background:white; border:1px solid #e2e8f0; border-radius:10px; margin-bottom: 20px; align-items:center; flex-wrap:wrap;">
+                <button class="action-btn btn-approve" onclick="massProcessScheduledAdmin()" style="background:#2563eb; color:white;">▶ Mass Process Selected</button>
+                
+                <div style="display:flex; gap:8px; align-items:center; border-left:1px solid #e2e8f0; border-right:1px solid #e2e8f0; padding:0 15px;">
+                    <select id="massStatusUpdateSelectSched" class="admin-input" style="width:160px;">
+                        <option value="">Update Status...</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="false">Pending</option>
+                        <option value="true">Completed</option>
+                        <option value="Processing">Processing</option>
+                        <option value="In transit">In Transit</option>
+                        <option value="Received">Received</option>
+                        <option value="Waiting">Waiting</option>
+                        <option value="Undelivered">Undelivered</option>
+                        <option value="Refund">Refunded</option>
+                        <option value="Failed">Failed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <button class="action-btn btn-approve" onclick="applyMassStatusUpdateSched()">Update</button>
+                </div>
+
+                <button class="action-btn" style="background:#ef4444; color:white;" onclick="massDeleteScheduledAdmin()">🗑 Mass Delete & Refund (Legacy)</button>
+            </div>
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllScheduled" onclick="toggleAllScheduled(this)"></th>
+                            <th>Id</th>
+                            
+                            <th>Customer & Recipient</th>
+                            <th>Prod & GB Size</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            <th>Scheduled At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduledTableBody">
+                        <tr><td colspan="7" class="state-msg">Loading scheduled orders queue...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- MANUAL FUNDING SECTION -->
+        <section id="tab-manual" class="dashboard-panel">
+            <div class="panel-header">
+                <h2>Manual Transfers to Approve</h2>
+                <button class="refresh-btn" onclick="loadManualFunding()">Refresh</button>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Tx ID / Ref</th>
+                            <th>User Email</th>
+                            <th>Amount (₵)</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manualTableBody">
+                        <tr><td colspan="5" class="state-msg">Loading manual funding...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SUPPORT TICKETS SECTION -->
+        <section id="tab-support" class="dashboard-panel">
+            <div class="panel-header">
+                <h2>Active Support Tickets</h2>
+                <button class="refresh-btn" onclick="loadSupportTickets()">Refresh</button>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Related Order</th>
+                                <th>User Phone</th>
+                                <th>Issue</th>
+                                <th>Screenshot</th>
+                                <th>Actions</th>
+                            </tr>
+                    </thead>
+                    <tbody id="supportTableBody">
+                        <tr><td colspan="6" class="state-msg">Loading support tickets...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- USERS OVERVIEW SECTION -->
+        <section id="tab-users" class="dashboard-panel">
+            <div class="panel-header">
+                <h2>User Database</h2>
+                <div style="display:flex; gap:10px;">
+                    <button class="action-btn" style="background:#10b981; color:white; padding:10px 20px;" onclick="exportAllUsersCSV()">📥 Export All Users</button>
+                    <button class="refresh-btn" onclick="loadUsers()">Refresh</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Business & Region</th>
+                            <th>Wallet Bal.</th>
+                            <th>Role</th>
+                            <th>Change Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="7" class="state-msg">Loading internal user database...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CREDIT/DEBIT MODAL -->
+            <div id="walletModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+                <div style="background:white; border-radius:16px; padding:30px; max-width:420px; width:90%; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+                    <h3 id="walletModalTitle" style="margin:0 0 8px; font-size:18px; color:#1e293b;">💳 Credit/Debit User</h3>
+                    <p id="walletModalUser" style="color:#64748b; font-size:13px; margin:0 0 20px;"></p>
+                    <div style="display:flex; gap:8px; margin-bottom:16px;">
+                        <button id="creditTabBtn" onclick="setWalletAction('credit')" style="flex:1; padding:10px; border:2px solid #10b981; background:rgba(16,185,129,0.1); color:#10b981; border-radius:8px; font-weight:700; cursor:pointer;">+ Credit</button>
+                        <button id="debitTabBtn" onclick="setWalletAction('debit')" style="flex:1; padding:10px; border:2px solid #e2e8f0; background:white; color:#64748b; border-radius:8px; font-weight:700; cursor:pointer;">− Debit</button>
+                    </div>
+                    <label style="font-size:13px; font-weight:600; color:#475569; display:block; margin-bottom:6px;">Amount (₵)</label>
+                    <input type="number" id="walletAmount" step="0.01" min="0.01" placeholder="0.00" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-size:16px; box-sizing:border-box;">
+                    <label style="font-size:13px; font-weight:600; color:#475569; display:block; margin:12px 0 6px;">Reason (optional)</label>
+                    <input type="text" id="walletReason" placeholder="e.g., Bonus, Refund, Penalty" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button onclick="closeWalletModal()" style="flex:1; padding:12px; border:1px solid #e2e8f0; background:white; color:#64748b; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
+                        <button id="walletSubmitBtn" onclick="submitWalletAction()" style="flex:1; padding:12px; border:none; background:#10b981; color:white; border-radius:8px; font-weight:700; cursor:pointer;">Confirm Credit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSACTIONS MODAL -->
+            <div id="txModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+                <div style="background:white; border-radius:16px; padding:30px; max-width:700px; width:95%; max-height:80vh; overflow-y:auto; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h3 id="txModalTitle" style="margin:0; font-size:18px; color:#1e293b;">📋 User Transactions</h3>
+                        <button onclick="closeTxModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#94a3b8;">×</button>
+                    </div>
+                    <div id="txModalBody" style="font-size:13px;">
+                        <p style="color:#94a3b8;">Loading transactions...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRICING & GATEWAY CONTROLS SECTION -->
+        <section id="tab-pricing" class="dashboard-panel">
+            <div class="panel-header">
+                <h2>Pricing & Gateway Controls</h2>
+                <button class="refresh-btn" onclick="loadPricingConfig()">Refresh Matrix</button>
+            </div>
+            
+            <div id="pricingConfigBody">
+                <!-- 1. PAYMENT GATEWAY SETTINGS -->
+                <div style="background:white; padding:25px; border-radius:16px; border:1px solid #e2e8f0; margin-bottom: 30px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+                    <h3 style="margin-top:0; color:#0f172a; font-size:16px; display:flex; align-items:center; gap:8px;">💳 Payment Gateway Settings</h3>
+                    <p style="font-size:13px; color:#64748b; margin-bottom: 20px;">Configure your Paystack public key and enable/disable payment methods for users.</p>
+                    
+                    <!-- SYSTEM MAINTENANCE MODE -->
+                    <div style="background:#fff7ed; padding:15px; border-radius:12px; border:1px solid #ffedd5; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h4 style="margin:0; color:#9a3412; font-size:15px;">🚧 System Maintenance Mode</h4>
+                            <p style="margin:4px 0 0; font-size:12px; color:#c2410c;">When active, all non-admin users are redirected to the maintenance page.</p>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span id="maintenanceStatusLabel" style="font-size:13px; font-weight:700; color:#9a3412;">OFF</span>
+                            <button id="maintenanceToggleBtn" onclick="toggleMaintenanceMode()" class="action-btn" style="background:#9a3412; color:white; padding:8px 16px;">Enable Maintenance</button>
+                        </div>
+                    </div>
+                    
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-bottom:20px;">
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:#475569; display:block; margin-bottom:6px;">Paystack Public Key (pk_live_... or pk_test_...)</label>
+                            <input type="text" id="paystackPubKey" class="admin-input" style="width:100%;" placeholder="Paste your Paystack Public Key here">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:#475569; display:block; margin-bottom:6px;">Paystack Secret Key (sk_live_... or sk_test_...)</label>
+                            <input type="password" id="paystackSecretKey" class="admin-input" style="width:100%;" placeholder="Paste your Paystack Secret Key here">
+                        </div>
+                        <div style="display:flex; gap:20px; align-items:flex-end;">
+                            <div style="flex:1;">
+                                <label style="font-size:12px; font-weight:700; color:#475569; display:block; margin-bottom:6px;">Paystack Status</label>
+                                <select id="paystackStatusToggle" class="admin-input" style="width:100%;">
+                                    <option value="true">✅ Enabled</option>
+                                    <option value="false">❌ Disabled</option>
+                                </select>
+                            </div>
+                            <div style="flex:1;">
+                                <label style="font-size:12px; font-weight:700; color:#475569; display:block; margin-bottom:6px;">Manual Transfer Status</label>
+                                <select id="manualStatusToggle" class="admin-input" style="width:100%;">
+                                    <option value="true">✅ Enabled</option>
+                                    <option value="false">❌ Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-bottom:20px; padding-top:15px; border-top:1px dashed #e2e8f0;">
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:#475569; display:block; margin-bottom:6px;">Manual Momo Number</label>
+                            <input type="text" id="manualMomoNumber" class="admin-input" style="width:100%;" placeholder="e.g. 0559623850">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:#475569; display:block; margin-bottom:6px;">Manual Account Name</label>
+                            <input type="text" id="manualMomoName" class="admin-input" style="width:100%;" placeholder="e.g. Data4Ghana Enterprise">
+                        </div>
+                    </div>
+
+                    <button class="action-btn btn-view" onclick="saveGatewaySettings()" style="padding:10px 24px;">💾 Save Gateway Settings</button>
+                </div>
+
+
+
+                <!-- 2. SPECIALIZED SERVICE COSTS -->
+                <div style="background:white; padding:25px; border-radius:16px; border:1px solid #e2e8f0; margin-bottom: 30px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+                    <h3 style="margin-top:0; color:#0f172a; font-size:16px; display:flex; align-items:center; gap:8px;">🏷️ Specialized Service Costs</h3>
+                    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:#475569; display:block; margin-bottom:6px;">Normal AFA Cost (₵)</label>
+                            <input type="number" id="afaNormalCost" class="admin-input" step="0.01" style="width:140px;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:700; color:#475569; display:block; margin-bottom:6px;">Premium AFA Cost (₵)</label>
+                            <input type="number" id="afaPremiumCost" class="admin-input" step="0.01" style="width:140px;">
+                        </div>
+                    </div>
+                    <button class="action-btn btn-view" onclick="saveAfaSettings()" style="padding:10px 24px;">💾 Save AFA Costs</button>
+                </div>
+
+                <!-- 3. DATA PRICING MATRIX -->
+                <div style="background:white; padding:25px; border-radius:16px; border:1px solid #e2e8f0; margin-bottom: 30px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
+                        <h3 style="margin:0; color:#0f172a; font-size:16px;">📊 Data Pricing Matrix (Per GB & Fixed Sizes)</h3>
+                        
+                        <div style="display:flex; gap:10px; align-items:center; background:#f1f5f9; padding:8px 15px; border-radius:12px; border:1px solid #e2e8f0;">
+                            <select id="newGbSizeProduct" class="admin-input" style="width:130px; padding:6px; font-weight:700;">
+                                <option value="data_mtn">🟡 MTN Data</option>
+                                <option value="data_telecel">🔴 Telecel</option>
+                                <option value="data_tigo">🔵 AirtelTigo</option>
+                                <option value="data_bigtime">🟣 BigTime</option>
+                            </select>
+                            <input type="number" id="newGbSizeInput" class="admin-input" step="0.1" min="0.1" placeholder="GB Size" style="width:80px; padding:6px;">
+                            <button class="action-btn" onclick="addPricingSize()" style="background:#0f172a; color:white; padding:6px 12px; font-size:12px;">Add Row</button>
+                        </div>
+
+                        <button class="action-btn btn-approve" onclick="saveDataPricingMatrix()" style="padding:8px 20px;">💾 Save All Prices</button>
+                    </div>
+                    <div class="table-container" style="max-height: 500px; overflow-y: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr style="background:#f8fafc;">
+                                    <th style="width:140px;">Product / Network</th>
+                                    <th style="width:80px;">Size</th>
+                                    <th style="width:100px;">Stock</th>
+                                    <th>Client</th>
+                                    <th>VIP</th>
+                                    <th>Agent</th>
+                                    <th>S.Agent</th>
+                                    <th>Admin</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pricingMatrixBody">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SPECIALIZED SERVICES SECTION -->
+        <section id="tab-afa" class="dashboard-panel">
+            <div class="panel-header">
+                <h2>Specialized Service Requests</h2>
+                <button class="refresh-btn" onclick="loadAfa()">Refresh List</button>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User Email</th>
+                            <th>Tier</th>
+                            <th>Full Name</th>
+                            <th>Phone</th>
+                            <th>ID Details</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="afaTableBody">
+                        <tr><td colspan="8" class="state-msg">Loading AFA requests...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- PROFIT CALCULATOR SECTION -->
+        <section id="tab-profit" class="dashboard-panel">
+            <div class="panel-header">
+                <h2>💰 Profit Calculator & Analytics</h2>
+                <button class="action-btn" style="background:#10b981; color:white; padding:10px 20px;" onclick="downloadProfitCSV()">📥 Download Profit CSV</button>
+            </div>
+            
+            <!-- Base Cost Configurator -->
+            <div style="background:white; padding:25px; border-radius:16px; border:1px solid #e2e8f0; margin-bottom: 30px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+                <h3 style="margin-top:0; color:#0f172a; font-size:16px;">⚙️ Set Internal Base Costs</h3>
+                <p style="font-size:13px; color:#64748b; margin-bottom: 20px;">Select a product below, then enter the wholesale base cost for each GB size.</p>
+                
+                <!-- Product Selector -->
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:13px; font-weight:700; color:#334155; display:block; margin-bottom:8px;">Select Product:</label>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="base-cost-tab" onclick="showBaseCostPanel('mtn')" id="bcTab_mtn" style="padding:10px 20px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; border:2px solid #fcd34d; background:#fef9c3; color:#854d0e; transition:all 0.2s;">🟡 MTN</button>
+                        <button class="base-cost-tab" onclick="showBaseCostPanel('telecel')" id="bcTab_telecel" style="padding:10px 20px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; border:2px solid #e2e8f0; background:white; color:#64748b; transition:all 0.2s;">🔴 Telecel</button>
+                        <button class="base-cost-tab" onclick="showBaseCostPanel('tigo')" id="bcTab_tigo" style="padding:10px 20px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; border:2px solid #e2e8f0; background:white; color:#64748b; transition:all 0.2s;">🔵 AirtelTigo</button>
+                        <button class="base-cost-tab" onclick="showBaseCostPanel('bigtime')" id="bcTab_bigtime" style="padding:10px 20px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; border:2px solid #e2e8f0; background:white; color:#64748b; transition:all 0.2s;">🟣 Bigtime</button>
+                    </div>
+                </div>
+
+                <!-- Dynamic GB Inputs Area -->
+                <div id="baseCostInputArea" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:24px; display:block;">
+                    <h4 id="baseCostNetLabel" style="margin:0 0 16px; font-size:15px; color:#0f172a;">🟡 MTN — Base Costs per GB Size</h4>
+                <div id="baseCostFields">
+                    <!-- Dynamically populated -->
+                </div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="action-btn btn-view" onclick="saveBaseCosts()" style="padding:10px 20px;">💾 Save Costs</button>
+                        <button class="action-btn" style="background:#f1f5f9; color:#475569; padding:10px 20px;" onclick="addCustomGbSize()">+ Add GB Size</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="panel-header">
+                <h2>📊 Margin Report</h2>
+                <div class="metrics-counters" style="display:flex; gap:20px; font-weight:700; font-size:18px; align-items: baseline;">
+                    <span style="color:#0f172a;">Net Profit: <span id="totalProfitCounter" style="color:#059669;">₵0.00</span></span>
+                    <span style="color:#64748b; font-size: 14px; font-weight: 500;">(Lifetime Total: <span id="lifetimeProfitCounterReport" style="color:#0f172a;">₵0.00</span>)</span>
+                </div>
+            </div>
+            <div class="filter-bar" style="display:flex; gap:12px; margin-bottom: 20px; flex-wrap: wrap;">
+                <input type="date" id="profitDateFrom" class="admin-input" title="From Date">
+                <input type="date" id="profitDateTo" class="admin-input" title="To Date">
+                <select id="profitProduct" class="admin-input">
+                    <option value="">All Products</option>
+                    <option value="MTN">MTN Data</option>
+                    <option value="Telecel">Telecel</option>
+                    <option value="AirtelTigo">AirtelTigo</option>
+                    <option value="Bigtime">Bigtime</option>
+                </select>
+                <select id="profitRole" class="admin-input">
+                    <option value="">All User Roles</option>
+                    <option value="client">Client</option>
+                    <option value="vip_customer">VIP Customer</option>
+                    <option value="elite_agent">Elite Agent</option>
+                    <option value="super_agent">Super Agent</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button class="refresh-btn" onclick="generateProfitReport()" style="background:#0f172a; color:white;">🔍 Run Analytics</button>
+            </div>
+
+            <!-- Product Breakdown Summary Cards -->
+            <div id="profitSummaryCards">
+                <div style="background:linear-gradient(135deg, #fef08a 0%, #fde68a 100%); padding:20px; border-radius:14px; border:1px solid #fcd34d;">
+                    <p style="margin:0 0 6px; font-size:12px; font-weight:700; color:#854d0e; text-transform:uppercase;">MTN Profit</p>
+                    <h3 id="profit_mtn" style="margin:0; font-size:22px; font-weight:800; color:#854d0e;">₵0.00</h3>
+                    <p style="margin:4px 0 0; font-size:12px; color:#92400e;"><span id="profit_mtn_orders">0</span> orders</p>
+                </div>
+                <div style="background:linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); padding:20px; border-radius:14px; border:1px solid #f87171;">
+                    <p style="margin:0 0 6px; font-size:12px; font-weight:700; color:#991b1b; text-transform:uppercase;">Telecel Profit</p>
+                    <h3 id="profit_telecel" style="margin:0; font-size:22px; font-weight:800; color:#991b1b;">₵0.00</h3>
+                    <p style="margin:4px 0 0; font-size:12px; color:#b91c1c;"><span id="profit_telecel_orders">0</span> orders</p>
+                </div>
+                <div style="background:linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%); padding:20px; border-radius:14px; border:1px solid #60a5fa;">
+                    <p style="margin:0 0 6px; font-size:12px; font-weight:700; color:#1e40af; text-transform:uppercase;">AirtelTigo Profit</p>
+                    <h3 id="profit_tigo" style="margin:0; font-size:22px; font-weight:800; color:#1e40af;">₵0.00</h3>
+                    <p style="margin:4px 0 0; font-size:12px; color:#1d4ed8;"><span id="profit_tigo_orders">0</span> orders</p>
+                </div>
+                <div style="background:linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); padding:20px; border-radius:14px; border:1px solid #a78bfa;">
+                    <p style="margin:0 0 6px; font-size:12px; font-weight:700; color:#6b21a8; text-transform:uppercase;">Bigtime Profit</p>
+                    <h3 id="profit_bigtime" style="margin:0; font-size:22px; font-weight:800; color:#6b21a8;">₵0.00</h3>
+                    <p style="margin:4px 0 0; font-size:12px; color:#7c3aed;"><span id="profit_bigtime_orders">0</span> orders</p>
+                </div>
+            </div>
+
+            <!-- Role Breakdown Summary -->
+            <div id="profitRoleCards">
+                <div style="background:white; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+                    <p style="margin:0 0 4px; font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">Client</p>
+                    <h4 id="profit_role_client" style="margin:0; font-size:18px; font-weight:800; color:#059669;">₵0.00</h4>
+                </div>
+                <div style="background:white; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+                    <p style="margin:0 0 4px; font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">VIP Customer</p>
+                    <h4 id="profit_role_vip" style="margin:0; font-size:18px; font-weight:800; color:#059669;">₵0.00</h4>
+                </div>
+                <div style="background:white; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+                    <p style="margin:0 0 4px; font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">Elite Agent</p>
+                    <h4 id="profit_role_elite" style="margin:0; font-size:18px; font-weight:800; color:#059669;">₵0.00</h4>
+                </div>
+                <div style="background:white; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+                    <p style="margin:0 0 4px; font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">Super Agent</p>
+                    <h4 id="profit_role_super" style="margin:0; font-size:18px; font-weight:800; color:#059669;">₵0.00</h4>
+                </div>
+            </div>
+
+            <!-- Detailed Orders Table -->
+            <div class="table-container">
+                <table class="admin-table" id="profitReportTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Id</th>
+                            <th>Product</th>
+                            <th>GB Size</th>
+                            <th>Role</th>
+                            <th>Charged (₵)</th>
+                            <th>Base Cost (₵)</th>
+                            <th>Net Profit (₵)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="profitTableBody">
+                        <tr><td colspan="8" class="state-msg">Click "Run Analytics" above to generate your margin report.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+
+        <!-- STORE MANAGEMENT SECTION -->
+        <section id="tab-stores" class="dashboard-panel">
+            <div class="panel-header" style="justify-content: flex-start; gap: 15px; align-items: center;">
+                <h2>🏪 Storefront Ecosystem</h2>
+                <span class="count-pill" id="storeTotalCounter">0 Global Stores</span>
+            </div>
+
+            <div style="background:white; padding:25px; border-radius:16px; border:1px solid #e2e8f0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
+                    <div>
+                        <h3 style="margin:0;">Active Agent Hubs</h3>
+                        <p style="font-size:13px; color:#64748b; margin:4px 0 0 0;">Oversee all active and pending agent storefronts.</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Agent Details</th>
+                                <th>Store Name & Slug</th>
+                                <th>Public Status</th>
+                                <th>Configurations</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="storesAdminBody">
+                            <tr><td colspan="5" class="state-msg">Syncing storefront data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- IMAGE MODAL -->
+    <div id="imageModal" class="modal">
+        <div style="max-width:90%; width:1000px; margin: 30px auto; position:relative;">
+            <span class="close" onclick="closeModal()" style="top:-40px; right:0;">&times;</span>
+            <div style="background:white; border-radius:16px; padding:20px; overflow:hidden;">
+                <h3 id="modalTitle" style="margin-top:0; font-size:18px; color:#0f172a; border-bottom:1px solid #f1f5f9; padding-bottom:12px;">Document Viewer</h3>
+                <div id="modalBody" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; max-height:80vh; overflow-y:auto; padding:10px;">
+                    <!-- Multiple images will be injected here -->
+                    <img id="modalImg" style="display:none; max-width:100%; border-radius:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleAdminSidebar() {
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('adminOverlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+    // Close sidebar when any nav link is clicked
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('adminOverlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+    });
+    </script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>
+
+

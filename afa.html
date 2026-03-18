@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AFA PORTAL</title>
+
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/afa.css">
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <!-- Supabase Database Connection -->
+  <script src="js/supabase.js"></script>
+  <script src="js/security.js"></script>
+
+</head>
+
+<body class="afa-page">
+
+  <button class="menu-btn" onclick="openMenu()">☰</button>
+
+  <div id="menu-container"></div>
+
+  <div class="afa-choice-container">
+
+    <h2>AFA Services Portal</h2>
+    <p class="subtitle">Initialize registration protocol. <span class="wallet-badge-quantum">Balance: <span
+          id="afaWalletDisplay">₵0.00</span></span></p>
+
+    <div class="afa-options">
+
+      <button class="afa-card premium" onclick="window.location.href='afa-premium.html'">
+        <div class="tier-badge" style="color: var(--quantum-cyan);">Enterprise Path</div>
+        <div class="afa-card-icon">💎</div>
+        <h4>Enterprise Core</h4>
+        <span class="afa-price premium-price-label">₵30.00</span>
+        <p>Seamless automated fulfillment. No manual verification required.</p>
+      </button>
+
+      <button class="afa-card normal" onclick="window.location.href='afa-normal.html'">
+        <div class="tier-badge" style="color: var(--quantum-violet);">Standard Path</div>
+        <div class="afa-card-icon">📡</div>
+        <h4>Standard Link</h4>
+        <span class="afa-price normal-price-label">₵25.00</span>
+        <p>Standard secure enrollment. Manual document audit required.</p>
+      </button>
+
+    </div>
+
+  </div>
+
+  <script src="js/menu.js"></script>
+
+  <script>
+    // Lightweight script to just fetch pricing & wallet for this routing page
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { window.location.href = 'login.html'; return; }
+
+        const { data: wData } = await supabase.from('users').select('wallet_balance, role').eq('id', user.id).single();
+        if (wData) {
+          document.getElementById('afaWalletDisplay').textContent = `₵${parseFloat(wData.wallet_balance || 0).toFixed(2)}`;
+
+          // If role is admin, use super_agent as fallback for pricing
+          const effectiveRole = wData.role === 'admin' ? 'super_agent' : (wData.role || 'client');
+
+          const { data: prices } = await supabase.from('pricing').select('product, price').eq('role', effectiveRole).in('product', ['afa_premium', 'afa_normal']);
+
+          if (prices && prices.length > 0) {
+            prices.forEach(p => {
+              if (p.product === 'afa_premium') {
+                const el = document.querySelector('.premium-price-label');
+                if (el) el.textContent = `₵${parseFloat(p.price).toFixed(2)}`;
+              }
+              if (p.product === 'afa_normal') {
+                const el = document.querySelector('.normal-price-label');
+                if (el) el.textContent = `₵${parseFloat(p.price).toFixed(2)}`;
+              }
+            });
+          }
+        }
+      } catch (e) {
+        console.error('AFA index error:', e);
+      }
+    });
+  </script>
+
+  <style>
+    @media (max-width: 768px) {
+      .afa-choice-container {
+        padding: 40px 15px;
+        margin-top: 0;
+      }
+
+      .afa-options {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .afa-card {
+        padding: 40px 25px;
+      }
+
+      h2 {
+        font-size: 32px;
+        letter-spacing: -1px;
+      }
+    }
+  </style>
+</body>
+
+</html>

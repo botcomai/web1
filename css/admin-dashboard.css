@@ -1,0 +1,709 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+body.admin-dashboard-bg {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f1f5f9;
+    color: #334155;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ===========================
+   SIDEBAR
+   =========================== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 25px rgba(0,0,0,0.15);
+    z-index: 150;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.brand {
+    padding: 28px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.shield {
+    font-size: 28px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    border-radius: 12px;
+}
+
+.brand h3 {
+    margin: 0;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+    flex: 1;
+    padding: 16px 0;
+    overflow-y: auto;
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 24px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    position: relative;
+}
+
+.nav-links a:hover {
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+}
+
+.nav-links a.active {
+    background: rgba(59, 130, 246, 0.1);
+    color: white;
+    border-left-color: #3b82f6;
+}
+
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background: #3b82f6;
+    border-radius: 3px 0 0 3px;
+}
+
+.logout-btn {
+    margin: 16px 20px;
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.logout-btn:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Mobile sidebar toggle button */
+.admin-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 200;
+    background: #0f172a;
+    color: white;
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-menu-btn:hover {
+    background: #1e293b;
+    transform: scale(1.05);
+}
+
+.admin-menu-btn:active {
+    transform: scale(0.95);
+}
+
+/* ===========================
+   MAIN CONTENT AREA
+   =========================== */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #f1f5f9;
+}
+
+header {
+    background: white;
+    padding: 24px 40px;
+    padding-left: 80px; /* Space for the menu button */
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.user-info h1 {
+    margin: 0 0 4px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+}
+
+.user-info p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ===========================
+   PANELS / TABS
+   =========================== */
+.dashboard-panel {
+    display: none;
+    padding: 36px 40px;
+}
+
+.dashboard-panel.active {
+    display: block;
+    animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+}
+
+/* ===========================
+   STAT CARDS GRID (Overview)
+   =========================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #e2e8f0;
+    transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+}
+
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.stat-content p {
+    margin: 0 0 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+/* ===========================
+   REFRESH / ACTION BUTTONS
+   =========================== */
+.refresh-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* ===========================
+   ADMIN INPUTS
+   =========================== */
+.admin-input {
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: #334155;
+    transition: all 0.2s ease;
+    min-width: 0;
+}
+
+.admin-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* ===========================
+   ADMIN TABLES
+   =========================== */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.admin-table th {
+    background: #f8fafc;
+    font-weight: 700;
+    font-size: 12px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+}
+
+.admin-table td {
+    font-size: 14px;
+    color: #334155;
+    font-weight: 500;
+}
+
+.admin-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.admin-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.state-msg {
+    text-align: center;
+    color: #94a3b8 !important;
+    padding: 40px !important;
+    font-style: italic;
+}
+
+/* ===========================
+   ACTION BUTTONS
+   =========================== */
+.action-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    margin-right: 5px;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+.btn-approve {
+    background: #ecfdf5;
+    color: #059669;
+}
+.btn-approve:hover { background: #d1fae5; }
+
+.btn-reject {
+    background: #fef2f2;
+    color: #dc2626;
+}
+.btn-reject:hover { background: #fee2e2; }
+
+.btn-view {
+    background: #eff6ff;
+    color: #2563eb;
+}
+.btn-view:hover { background: #dbeafe; }
+
+/* ===========================
+   STATUS BADGES
+   =========================== */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.status-checking {
+    background: #fef3c7;
+    color: #d97706;
+}
+.status-checking::before { background: #d97706; }
+
+.status-approved {
+    background: #d1fae5;
+    color: #059669;
+}
+.status-approved::before { background: #059669; }
+
+.status-false {
+    background: #fee2e2;
+    color: #dc2626;
+}
+.status-false::before { background: #dc2626; }
+
+/* ===========================
+   FILTER BAR
+   =========================== */
+.filter-bar {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+/* ===========================
+   MASS ACTION BAR
+   =========================== */
+.mass-action-bar {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+/* ===========================
+   PROFIT & BASE COST GRIDS
+   =========================== */
+#baseCostFields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+#profitSummaryCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+#profitRoleCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+/* ===========================
+   IMAGE MODAL
+   =========================== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f5f9;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: #ef4444;
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+   =========================== */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    body.admin-dashboard-bg {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 280px;
+        transform: translateX(-100%);
+        z-index: 150;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .admin-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .admin-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 140;
+    }
+
+    .admin-overlay.active {
+        display: block;
+    }
+    
+    .main-content {
+        width: 100%;
+        height: 100vh;
+    }
+    
+    header {
+        padding: 18px 20px;
+        padding-left: 70px;
+    }
+    
+    .user-info h1 {
+        font-size: 18px;
+    }
+    
+    .dashboard-panel {
+        padding: 20px 16px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    /* Profit & Order Status Cards Layout */
+    #profitSummaryCards, 
+    #profitRoleCards, 
+    #orderStatusCards,
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    /* Base Cost Configurator Mobile */
+    #baseCostFields {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    #baseCostInputArea {
+        padding: 16px !important;
+    }
+
+    #baseCostInputArea div {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    #baseCostInputArea button {
+        width: 100%;
+        margin-right: 0 !important;
+        margin-bottom: 8px;
+    }
+    
+    .filter-bar {
+        flex-direction: column !important;
+        padding: 16px !important;
+    }
+
+    .filter-bar input, 
+    .filter-bar select, 
+    .filter-bar button {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    .mass-action-bar {
+        flex-direction: column !important;
+        gap: 12px !important;
+        padding: 16px !important;
+    }
+    
+    .mass-action-bar > div {
+        border-right: none !important;
+        padding-right: 0 !important;
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .mass-action-bar button,
+    .mass-action-bar input {
+        width: 100% !important;
+        margin-bottom: 8px;
+    }
+
+    /* Table Scrolling improvements */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -16px; /* Bleed to edges on mobile if needed */
+        border-radius: 0;
+        border-right: none;
+        border-left: none;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 12px 14px;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+
+    /* Header sizing */
+    header {
+        padding: 16px 20px;
+        padding-left: 76px;
+        min-height: 80px;
+    }
+
+    header .refresh-btn {
+        display: none; /* Hide sync button on small mobile and let it be in overflow or menu if needed */
+    }
+}
